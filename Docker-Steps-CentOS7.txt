@@ -1,0 +1,119 @@
+================================================================
+INSTALLATION
+================================================================
+
+# cd /etc/yum.repos.d
+
+# vim docker.repo
+	
+	[dockerrepo]
+	name=Docker Repository
+	baseurl=https://yum.dockerproject.org/repo/main/centos/7/
+	enabled=1
+	gpgcheck=1
+	gpgkey=https://yum.dockerproject.org/gpg
+
+# yum update
+
+# yum install -y docker-engine
+
+# systemctl enable docker
+
+# systemctl start docker
+	# docker --version
+	# docker images
+			(shows what is installed - currently there no Base Image is installed)
+			REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+	# logout
+	$ docker images
+			Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get 			http://%2Fvar%2Frun%2Fdocker.sock/v1.29/images/json: 	dial unix /var/run/docker.sock: connect: permission denied
+	$ su -
+
+# cd /var/run
+	
+	# ls -al dock*
+			-rw-r--r--. 1 root root     4 Aug 10 15:57 docker.pid
+			srw-rw----. 1 root docker   0 Aug 10 15:57 docker.sock <--- as a user I have to be able to connect to this file, which 			is owned by "root" and a "docker" user group
+
+	# cat /etc/group | grep docker
+			docker:x:988:		<--- no users associated with the "docker group"
+
+# usermod -a -G docker user
+	
+	# cat /etc/group | grep docker
+			docker:x:988:user	<--- the user "user" added to the group
+
+--- relogin
+
+$ docker images
+			REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE   <--- as a user I'm able to 			connect to the docker dameon.
+			
+
+====> At this point I can pull, install images and run containers as a non-privileged user on the system.
+
+
+================================================================
+
+The Docker Hub - the most common public repository I will be pulling images from.
+Base Images - It all starts with a base image. This is a foundation for containers.
+I have to have a Base Image in order to run containers.
+
+Here we will pull down a couple of base images and show how we can get some information 
+on what they are and how they were built.
+================================================================
+
+$ docker images
+			REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE  	<--- I don't have any images 			created. Which means I can't run any containers.
+			
+$ docker search centos
+
+$ docker pull hello-world
+
+		$ docker images
+			REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+			hello-world         latest              1815c82652c0        8 weeks ago         1.84kB
+
+$ docker run hello-world:latest 		OR			$ docker run 1815c82652c0 <-- IMAGE ID
+
+$ docker pull centos:centos6
+
+$ docker pull centos
+
+$ docker pull nginx:latest
+		
+		$ docker images
+			REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+			centos              centos6             7ea307891843        6 days ago          194MB
+			centos              latest              328edcd84f1b        6 days ago          193MB
+			nginx               latest              b8efb18f159b        2 weeks ago         107MB
+			hello-world         latest              1815c82652c0        8 weeks ago         1.84kB
+
+$ docker inspect centos			OR			$ docker inspect 328edcd84f1b	<--- returns information about the image in JSON.
+
+
+================================================================
+
+Running Containers
+================================================================
+
+$ docker pull docker/whalesay
+
+$ docker run docker/whalesay cowsay Hello
+
+ _______ 
+< Hello >
+ ------- 
+    \
+     \
+      \     
+                    ##        .            
+              ## ## ##       ==            
+           ## ## ## ##      ===            
+       /""""""""""""""""___/ ===        
+  ~~~ {~~ ~~~~ ~~~ ~~~~ ~~ ~ /  ===- ~~~   
+       \______ o          __/            
+        \    \        __/             
+          \____\______/
+		  
+
+$ docker ps		<--- Process list from within the Docker daemon. Shows what containers running on my system.
