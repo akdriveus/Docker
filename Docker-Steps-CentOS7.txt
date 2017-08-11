@@ -5,7 +5,7 @@ INSTALLATION
 # cd /etc/yum.repos.d
 
 # vim docker.repo
-	
+
 	[dockerrepo]
 	name=Docker Repository
 	baseurl=https://yum.dockerproject.org/repo/main/centos/7/
@@ -30,7 +30,7 @@ INSTALLATION
 	$ su -
 
 # cd /var/run
-	
+
 	# ls -al dock*
 			-rw-r--r--. 1 root root     4 Aug 10 15:57 docker.pid
 			srw-rw----. 1 root docker   0 Aug 10 15:57 docker.sock <--- as a user I have to be able to connect to this file, which 			is owned by "root" and a "docker" user group
@@ -39,7 +39,7 @@ INSTALLATION
 			docker:x:988:		<--- no users associated with the "docker group"
 
 # usermod -a -G docker user
-	
+
 	# cat /etc/group | grep docker
 			docker:x:988:user	<--- the user "user" added to the group
 
@@ -47,7 +47,7 @@ INSTALLATION
 
 $ docker images
 			REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE   <--- as a user I'm able to 			connect to the docker dameon.
-			
+
 
 ====> At this point I can pull, install images and run containers as a non-privileged user on the system.
 
@@ -58,13 +58,13 @@ The Docker Hub - the most common public repository I will be pulling images from
 Base Images - It all starts with a base image. This is a foundation for containers.
 I have to have a Base Image in order to run containers.
 
-Here we will pull down a couple of base images and show how we can get some information 
+Here we will pull down a couple of base images and show how we can get some information
 on what they are and how they were built.
 ================================================================
 
 $ docker images
 			REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE  	<--- I don't have any images 			created. Which means I can't run any containers.
-			
+
 $ docker search centos
 
 $ docker pull hello-world
@@ -80,7 +80,7 @@ $ docker pull centos:centos6
 $ docker pull centos
 
 $ docker pull nginx:latest
-		
+
 		$ docker images
 			REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 			centos              centos6             7ea307891843        6 days ago          194MB
@@ -100,24 +100,20 @@ $ docker pull docker/whalesay
 
 $ docker run docker/whalesay cowsay Hello
 
- _______ 
+ _______
 < Hello >
- ------- 
+ -------
     \
      \
-      \     
-                    ##        .            
-              ## ## ##       ==            
-           ## ## ## ##      ===            
-       /""""""""""""""""___/ ===        
-  ~~~ {~~ ~~~~ ~~~ ~~~~ ~~ ~ /  ===- ~~~   
-       \______ o          __/            
-        \    \        __/             
+      \
+                    ##        .
+              ## ## ##       ==
+           ## ## ## ##      ===
+       /""""""""""""""""___/ ===
+  ~~~ {~~ ~~~~ ~~~ ~~~~ ~~ ~ /  ===- ~~~
+       \______ o          __/
+        \    \        __/
           \____\______/
-		  
+
 
 $ docker ps		<--- Process list from within the Docker daemon. Shows what containers running on my system.
-
-change from PC
-
-update from MacWork
