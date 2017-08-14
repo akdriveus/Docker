@@ -116,6 +116,126 @@ $ docker run docker/whalesay cowsay Hello
           \____\______/
 
 
-$ docker ps		<--- Process list from within the Docker daemon. Shows what containers running on my system.
+$ docker ps		<--- Shows what containers running on my system. Process list from within the Docker daemon.
+
+		$ docker ps -a	<--- Shows containers in the "stop" state.
 
 <<<TextMate>>>
+
+$ docker inspect docker/whalesay	
+									} <--- to figure out what this contaner was ment to do.
+$ docker inspect centos
+
+
+$ docker run -it centos:latest /bin/bash
+			[root@802587d087ff /]# 
+			
+			-i	<== run the container in the interactive mode,
+			t	<== connected to my current terminal or tty
+			/bin/bash	<== the name of the command that I want my container to start up with.
+			
+	- Beacause I'm running it iteractivelly (-i) and on my terminal (t), it's gonna automatically attach me as the root user
+	in the /bin/bash prompt.
+			
+			"In unix terminology,
+			terminal = tty = text input/output environment
+			console = physical terminal
+			shell = command line interpreter"
+			
+			"A tty command in Linux and other Unix-like operating systems is a shell command that can be entered interactively or 			as part of a script to determine whether the output for the script is a terminal (that is, to an interactive user) or 
+			to some other destination such as another program or a printer"
+-----			
+[root@11b58a130b8a /]# yum upgrade
+
+			Will upgrade the packages from inside of my container, and install in my container all effected applications or all 			available updates.
+			
+		[root@11b58a130b8a /]# exit		<== to exit from the container. And the container will be stoped beecause the ""
+			
+		I'm no longer working on my host OS, I'm working on my container OS.
+		My container OS isn't by all means a full OS. My container only contains the libraries and dependencies that are necessary
+		to run e minimum amount of probgrams that I have installed.
+	
+		For Example: - there are no things like SSH
+				 	 - telnet
+				 
+	The only command that is currently running on this container, is what I started it up with in an interactive mode, which is
+	/bin/bash
+	
+
+
+[root@11b58a130b8a /]# exit	 <== to exit from the container. And the container will be stoped beecause the "/bin/bash" was stoped.
+-----
+
+$ docker run -d centos:latest /bin/bash
+
+			To run the container in the detoched mode. The container runs without me being connected to it.
+			It executes the command /bin/bash and closes.
+
+$ docker run -it centos:latest /bin/bash -e dowhile	 
+
+			If I want to write a script as par of my launching it, I could say execute a command (-e) and do the "dowhile" script,
+			that actually runs constently untill I exit or attached to that container.
+
+			-e	<== execute the command
+
+-----
+$ docker run -d nginx:latest
+			
+		$ docker ps
+		
+			CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
+			614baa25efa8        nginx:latest        "nginx -g 'daemon off"   47 seconds ago      Up 46 seconds       80/tcp              eloquent_torvalds
+		
+		
+		"NGINX is a web server or proxy server. Nginx used as reverse proxy server for HTTP, HTTPS, SMTP, IMAP, POP3 protocols, on
+		the other hand, it is also used for servers load balancing and HTTP Cache."
+		
+		
+		
+$ docker inspect 614baa25efa8
+
+			"Networks": {
+			                "bridge": {
+			                    "IPAMConfig": null,
+			                    "Links": null,
+			                    "Aliases": null,
+			                    "NetworkID": "ecf01c96402e152ba3e2af8fdd667d48507cf32a1ba429a88e9a38a1454f742f",
+			                    "EndpointID": "5b09b8386a3f077573e4e885c36e186047938cbfff2593aa47ec9b1dd2dc2290",
+			                    "Gateway": "172.17.0.1",
+			                    "IPAddress": "172.17.0.2",
+			                    "IPPrefixLen": 16,
+			                    "IPv6Gateway": "",
+			                    "GlobalIPv6Address": "",
+			                    "GlobalIPv6PrefixLen": 0,
+			                    "MacAddress": "02:42:ac:11:00:02"
+
+$ ping 172.17.0.2		<== container is pinging.
+
+			PING 172.17.0.2 (172.17.0.2) 56(84) bytes of data.
+			64 bytes from 172.17.0.2: icmp_seq=1 ttl=64 time=0.063 ms
+			64 bytes from 172.17.0.2: icmp_seq=2 ttl=64 time=0.041 ms
+			64 bytes from 172.17.0.2: icmp_seq=3 ttl=64 time=0.054 ms
+			64 bytes from 172.17.0.2: icmp_seq=4 ttl=64 time=0.042 ms
+			^C
+			--- 172.17.0.2 ping statistics ---
+			4 packets transmitted, 4 received, 0% packet loss, time 2999ms
+			rtt min/avg/max/mdev = 0.041/0.050/0.063/0.009 ms
+
+# yum install elinks
+
+			elinks - text-based web browser.
+
+# elinks http://172.17.0.2
+
+			Welcome to nginx!                                            
+                                                                                                        
+			   If you see this page, the nginx web server is successfully installed and working. Further            
+			   configuration is required.                                                                           
+                                                                                                        
+			   For online documentation and support please refer to nginx.org.                                      
+			   Commercial support is available at nginx.com.                                                        
+                                                                                                        
+			   Thank you for using nginx.
+			   
+			   >>> NGINX web server is installed and working.
+			   
