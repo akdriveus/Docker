@@ -209,7 +209,7 @@ $ docker inspect 614baa25efa8
 			                    "GlobalIPv6PrefixLen": 0,
 			                    "MacAddress": "02:42:ac:11:00:02"
 
-$ ping 172.17.0.2		<== container is pinging.
+$ ping 172.17.0.2
 
 			PING 172.17.0.2 (172.17.0.2) 56(84) bytes of data.
 			64 bytes from 172.17.0.2: icmp_seq=1 ttl=64 time=0.063 ms
@@ -220,6 +220,8 @@ $ ping 172.17.0.2		<== container is pinging.
 			--- 172.17.0.2 ping statistics ---
 			4 packets transmitted, 4 received, 0% packet loss, time 2999ms
 			rtt min/avg/max/mdev = 0.041/0.050/0.063/0.009 ms
+			
+			>>> container is pinging.
 
 # yum install elinks
 
@@ -238,4 +240,96 @@ $ ping 172.17.0.2		<== container is pinging.
 			   Thank you for using nginx.
 			   
 			   >>> NGINX web server is installed and working.
+
+
+	# yum install telnet
 			   
+			   
+$ telnet 172.17.0.2 80
+			Trying 172.17.0.2...
+			Connected to 172.17.0.2.
+			Escape character is '^]'.
+			hello
+			HTTP/1.1 400 Bad Request
+			Server: nginx/1.13.3
+			Date: Mon, 14 Aug 2017 21:18:23 GMT
+			Content-Type: text/html
+			Content-Length: 173
+			Connection: close
+
+			<html>
+			<head><title>400 Bad Request</title></head>
+			<body bgcolor="white">
+			<center><h1>400 Bad Request</h1></center>
+			<hr><center>nginx/1.13.3</center>
+			</body>
+			</html>
+			Connection closed by foreign host.
+			
+			>>> This is expected response on "hello". NGINX works as expected.
+
+$ docker stop 614baa25efa8			OR			docker stop eloquent_torvalds   (eloquent_torvalds is container's NAME)
+
+			
+		$ docker ps
+		CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS         PORTS     NAMES
+				
+				
+		$ docker ps -a
+		CONTAINER ID        IMAGE                COMMAND                  CREATED        STATUS       PORTS           NAMES
+		614baa25efa8        nginx:latest         "nginx -g 'daemon ..."   42 minutes ago      Exited (0) 11 seconds ago 		eloquent_torvalds
+		
+
+$ docker run -d --name=MyWEB1 nginx:latest
+
+			--name=MyWEB1	<== giving a name to my container.
+			
+			
+		$ docker ps
+		CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS        NAMES
+		b07ea92af34f        nginx:latest        "nginx -g 'daemon ..."   3 minutes ago       Up 3 minutes        80/tcp      MyWEB1
+		
+		
+		$ docker inspect MyWEB1
+		
+
+$ docker stop b07ea92af34f			OR			$ docker stop MyWEB1
+
+================================================================
+
+The Container Lifecycle
+
+We need to understand the lifecycle of our containers, so we talk about how to start, stop, restart and display their state.
+================================================================
+
+$ docker run 
+
+		OR
+
+$ docker run -d --name=LifeCycle1 nginx:latest
+			 
+			 -d to run the container in the background so I can use it.
+
+
+$ docker attach LifeCycle1
+
+$ docker start LifeCycle1
+
+$ docker restart LifeCycle1
+
+$ docker exec -it LifeCycle1 /bin/bash		==> will allow me to execute something in a running container without affecting the
+											command or the process that was started by the container when it was instanciated.
+											And by stopping just executed command, I will not exiting the container itself. 
+											
+				-it		<== interactivelly attached
+											
+$ docker stop b07ea92af34f			OR			$ docker stop LifeCycle1
+
+================================================================
+
+Image and Container Management
+
+We know how to pull/install images and instantiate containers. 
+Removing them is equally important but there are some caveats, let's look at what we need to know!
+================================================================
+
