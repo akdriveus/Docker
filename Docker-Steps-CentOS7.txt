@@ -331,6 +331,108 @@ $ docker stop b07ea92af34f			OR			$ docker stop LifeCycle1
 Image and Container Management
 
 We know how to pull/install images and instantiate containers. 
-Removing them is equally important but there are some caveats, let's look at what we need to know!
+Removing them is equally important but there are some caveats.
 ================================================================
+
+$ docker rmi centos:centos6		<-- remove image
+
+			$ docker rmi hello-world
+					Error response from daemon: conflict: unable to remove repository reference "hello-world" (must force) - 					container 752960a0e544 is using its referenced image 1815c82652c0
+					
+$ docker rmi -f hello-world		<--  -f force removal
+
+++++ TYPICALLY - I'll remove the containers that are a dependency upon the base image. So, the error, is the reminder that I probably have containers that I need this image for. Or I have containers that are stopped, that are based on that base image, and I probably don't need anymore.++++
+
+$ docker rm wonderful_easley	OR		docker rm 752960a0e544		<-- remove the container
+
+$ docker rm name name OR ID ID		<-- to remove multiple containers
+
+$ docker ps -a -q		<-- returns IDs of containers that are stopped on my system
+
+			088f3391c4e3
+			4e9ec3f1e384
+			6cc0605acbcf
+			8ef4525d1743
+			a131906febd7
+			0e29c0af1a2f
+
+$ docker rm `docker ps -a -q`		<-- bash command substitute. Pass to the "remove" command IDs of all stopped containers. These 										containers will be removed.
+
+			088f3391c4e3
+			4e9ec3f1e384
+			6cc0605acbcf
+			8ef4525d1743
+			a131906febd7
+			0e29c0af1a2f
+			
+================================================================
+
+Redirection - Ports and Volumes
+We have the ability to redirect container ports and volumes to our host operating system for ease of use and flexibility.
+================================================================
+
+PORTS			- are exposed(openned) in a container so that I can connect them through the container IP, but they have to be 				  exposed as part of the docker file.
+
+				
+				- to combat the routing problems, I'm going to direct the port that is listening for HTTP on my container (nginx), 				  to a port on my underlying host.
+				
+				- the are a couple of different ways I can do that:
+				
+
+		$ docker images
+				
+			REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+			centos              latest              328edcd84f1b        2 weeks ago         193MB
+			nginx               latest              b8efb18f159b        3 weeks ago         107MB
+			
+		$ docker run -d nginx:latest
+			
+			91a32cd7a7332a3fade140a9bb09800cc8bf520c4bb6127a6a7bba3b63ec306f
+			
+		$ docker ps
+		
+			CONTAINER ID   IMAGE          COMMAND                  CREATED         STATUS          PORTS     NAMES
+			91a32cd7a733   nginx:latest   "nginx -g 'daemon ..."   59 seconds ago  Up 58 seconds   80/tcp    kind_lalande
+			
+		$ docker inspect kind_lalande | grep IPAddr
+			
+			"SecondaryIPAddresses": null,
+			            "IPAddress": "172.17.0.2",
+			                    "IPAddress": "172.17.0.2",
+								
+								
+		$ elinks http://172.17.0.2
+
+					Welcome to nginx!                                            
+                                                                                                        
+					   If you see this page, the nginx web server is successfully installed and working. 
+			   
+					   >>> NGINX web server is installed and working.
+					   
+		
+
+								
+$ docker run -d --name=WebServer1 -P nginx:latest
+
+					--> -P <-- It sayes, any ports that are exposed to my container, I want you to make available through the host 							   OS on a random port between 32768 and 65000. This is a port range that is available for docker to 
+							   pick randomly.
+
+	$ docker ps
+				
+	  CONTAINER ID   IMAGE      COMMAND                  CREATED       STATUS           PORTS                   NAMES
+	  190ef25498aa  nginx:latest "nginx -g 'daemon ..."  17 sec ago   Up 17 seconds   0.0.0.0:32768->80/tcp   WebServer1
+	  
+	  --> 0.0.0.0:32768->80/tcp This means that the port 32768 is bound all local interfaces. localhost as well as the IP that's assigned to this localhost. Also it is directing the traffic to port 80.
+	  
+	  --> I could have bound just the localhost 172.0.0.1, If I wanted to. 
+	  OR, if I had multiple IP adresses on the system and multiple ethernet adapters, I could bind it to just one particuilar.
+	  
+$ elinks http://172.17.0.2
+
+			Welcome to nginx!
+			
+$ elinks http://localhost:32768
+
+			Welcome to nginx!
+			
 
