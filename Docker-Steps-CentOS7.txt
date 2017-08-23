@@ -273,12 +273,14 @@ $ docker stop 614baa25efa8			OR			docker stop eloquent_torvalds   (eloquent_torv
 
 			
 		$ docker ps
-		CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS         PORTS     NAMES
+		
+			CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS         PORTS     NAMES
 				
 				
 		$ docker ps -a
-		CONTAINER ID        IMAGE                COMMAND                  CREATED        STATUS       PORTS           NAMES
-		614baa25efa8        nginx:latest         "nginx -g 'daemon ..."   42 minutes ago      Exited (0) 11 seconds ago 		eloquent_torvalds
+		
+			CONTAINER ID        IMAGE                COMMAND                  CREATED        STATUS       PORTS           NAMES
+			614baa25efa8        nginx:latest         "nginx -g 'daemon ..."   42 minutes ago      Exited (0) 11 seconds ago 			eloquent_torvalds
 		
 
 $ docker run -d --name=MyWEB1 nginx:latest
@@ -371,10 +373,10 @@ Redirection - Ports and Volumes
 We have the ability to redirect container ports and volumes to our host operating system for ease of use and flexibility.
 ================================================================
 
-PORTS			- are exposed(openned) in a container so that I can connect them through the container IP, but they have to be 				  exposed as part of the docker file.
+PORTS			- are exposed(openned) in a container so that I can connect them through the container 				  IP, but they have to be exposed as part of the docker file.
 
 				
-				- to combat the routing problems, I'm going to direct the port that is listening for HTTP on my container (nginx), 				  to a port on my underlying host.
+				- to combat the routing problems, I'm going to direct the port that is listening for HTTP 				  on my container (nginx), to a port on my underlying host.
 				
 				- the are a couple of different ways I can do that:
 				
@@ -414,8 +416,7 @@ PORTS			- are exposed(openned) in a container so that I can connect them through
 								
 $ docker run -d --name=WebServer1 -P nginx:latest
 
-					--> -P <-- It sayes, any ports that are exposed to my container, I want you to make available through the host 							   OS on a random port between 32768 and 65000. This is a port range that is available for docker to 
-							   pick randomly.
+					--> -P <-- It sayes, any ports that are exposed to my container, I want you to make available 					through the host OS on a random port between 32768 and 65000. This is a port range that is available for docker to pick randomly.
 
 	$ docker ps
 				
@@ -435,4 +436,97 @@ $ elinks http://localhost:32768
 
 			Welcome to nginx!
 			
+$ docker port WebServer1 $CONTAINERPORT
+		80/tcp -> 0.0.0.0:32769
+		
 
+			$ docker stop WebServer1
+			
+
+
+$ docker run -d -p 8080:80 --name=WebServer2 nginx:latest	<-- Bind a local port 8080 to container port 80
+
+	CONTAINER ID   IMAGE        COMMAND                CREATED         STATUS             PORTS                  NAMES
+	79697438174e   nginx:latest "nginx -g 'daemon ..." About a minute  Up About a minute  0.0.0.0:8080->80/tcp   WebServer2
+
+	$ docker run -d -p 8080:80, 8443:443 --name=WebServer2 nginx:latest <-- Bind multiple local ports to container ports
+
+$ elinks http://localhost:8080
+		
+		Welcome to nginx!
+
+
+I can mount directories from my underlieng hosts inside my container.
+
+--- 1st Way --- The first way we can do a container that mounts a particuilar directory:
+
+$ docker run -d -p 8080:80 --name=WebServer3 -v /mnt/data nginx:latest  
+		
+		17dc1e8015710e1ec198a98d3281912757fbb5f38dd10b656592f740b7423d69
+		    
+			<-- I've created a container that has a mount point /mnt/data inside of that container.
+
+
+One of the best practicies for Docker is to maintain my docker containers portable as possible, and they should not contain things that are intendent to stick around. I should be able to launch a new container with relatively little interaction. I should just be able to run a command and start the container without having to worry about the complex configuration inside the container.
+
+$ mkdir www
+
+$ cd www
+
+$ vim index.html
+
+		<HTML>
+
+		<HEAD></HEAD>
+
+		<BODY>
+
+		<HR/>
+		THIS IS A TEST PAGE
+		<HR/>
+
+		</BODY>
+
+		</HTML>
+
+$ docker run -d -p 8080:80 --name=WebServer4 -v /home/usr/www:/usr/share/nginx/html nginx:latest
+
+	 	- calling the "docker" daemon 
+		- to "run"
+		- in disconnected mode "-d"
+		- mapping the host port "-p" "8080" to the container port "80"
+		- calling it WebServer4 "--name=WebServer4"
+		- creating a volume mount "-v" from /home/usr/www on my host to the remote container /usr/share/nginx/html
+		- calling in an image "nginx:latest"
+	
+	51094356d865732f227bde8074f7ea3e286212d11f4eb96da92f89571747d662
+
+ Evrytime I change my underlying file I don't have to do anything with my container.
+ 
+ 
+================================================================
+
+
+The Dockerfile
+How to create your own base images. The Dockerfile will show you how.
+================================================================
+
+$ mkdir Builds
+
+$ cd Builds
+
+		$ docker images
+			
+			REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+			centos              latest              328edcd84f1b        2 weeks ago         193MB
+			nginx               latest              b8efb18f159b        4 weeks ago         107MB
+			
+		$ docker ps
+		
+			CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS          PORTS           NAMES
+			
+		
+		$ docker ps -a
+		
+			CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS          PORTS           NAMES
+			
