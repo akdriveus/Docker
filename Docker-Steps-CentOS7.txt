@@ -496,7 +496,7 @@ $ docker run -d -p 8080:80 --name=WebServer4 -v /home/usr/www:/usr/share/nginx/h
 		- in disconnected mode "-d"
 		- mapping the host port "-p" "8080" to the container port "80"
 		- calling it WebServer4 "--name=WebServer4"
-		- creating a volume mount "-v" from /home/usr/www on my host to the remote container /usr/share/nginx/html
+		- creating a volume mount "-v" from /home/usr/www on my host to the remote container wffwe
 		- calling in an image "nginx:latest"
 	
 	51094356d865732f227bde8074f7ea3e286212d11f4eb96da92f89571747d662
@@ -530,3 +530,511 @@ $ cd Builds
 		
 			CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS          PORTS           NAMES
 			
+$ vim Dockerfile
+
+		FROM debian:stable
+		MAINTAINER akdriveus <akdriveus@gmail.com>
+
+		RUN apt-get update
+		RUN apt-get upgrade
+		
+$ docker build -t  aktest1/myapache .			"." pull the docker file from the local directory
+
+				Sending build context to Docker daemon  2.048kB
+				Step 1/4 : FROM debian:stable
+				stable: Pulling from library/debian
+				105cbe84bc50: Pull complete 
+				Digest: sha256:333902dfe6e06e2e51002dc7c84855fb7e5fd88e21a4c863620fdfe2ccd70fc6
+				Status: Downloaded newer image for debian:stable
+				 ---> c5f70b742a9d
+				Step 2/4 : MAINTAINER akdriveus <akdriveus@gmail.com>
+				 ---> Running in b0f167b61c1f
+				 ---> f20ffdfade9f
+				Removing intermediate container b0f167b61c1f
+				Step 3/4 : RUN apt-get update
+				 ---> Running in 954e2014406b
+				Get:1 http://security.debian.org stable/updates InRelease [62.9 kB]
+				Get:2 http://security.debian.org stable/updates/main amd64 Packages [177 kB]
+				Ign:3 http://deb.debian.org/debian stable InRelease
+				Get:4 http://deb.debian.org/debian stable-updates InRelease [88.5 kB]
+				Get:5 http://deb.debian.org/debian stable Release [118 kB]
+				Get:6 http://deb.debian.org/debian stable Release.gpg [2373 B]
+				Get:7 http://deb.debian.org/debian stable/main amd64 Packages [9497 kB]
+				Fetched 9946 kB in 2s (4946 kB/s)
+				Reading package lists...
+				 ---> 0ad191c068dd
+				Removing intermediate container 954e2014406b
+				Step 4/4 : RUN apt-get upgrade
+				 ---> Running in ff63a1a6df67
+				Reading package lists...
+				Building dependency tree...
+				Reading state information...
+				Calculating upgrade...
+				0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+				 ---> 4dc15e66c763
+				Removing intermediate container ff63a1a6df67
+				Successfully built 4dc15e66c763
+				Successfully tagged aktest1/myapache:latest
+
+
+		$ docker images
+		
+		REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+		aktest1/myapache    latest              4dc15e66c763        3 minutes ago       116MB
+		centos              latest              328edcd84f1b        2 weeks ago         193MB
+		nginx               latest              b8efb18f159b        4 weeks ago         107MB
+		debian              stable              c5f70b742a9d        4 weeks ago         100MB
+		
+
+$ vim Dockerfile
+
+		FROM debian:stable
+		MAINTAINER akdriveus <akdriveus@gmail.com>
+
+		RUN apt-get update
+		RUN apt-get upgrade
+		RUN apt-get install telnet
+
+$ docker build -t  aktest1/myapache .
+
+				Sending build context to Docker daemon  2.048kB
+				Step 1/5 : FROM debian:stable
+				 ---> c5f70b742a9d
+				Step 2/5 : MAINTAINER akdriveus <akdriveus@gmail.com>
+				 ---> Using cache
+				 ---> f20ffdfade9f
+				Step 3/5 : RUN apt-get update
+				 ---> Using cache
+				 ---> 0ad191c068dd
+				Step 4/5 : RUN apt-get upgrade
+				 ---> Using cache
+				 ---> 4dc15e66c763
+				Step 5/5 : RUN apt-get install telnet
+				 ---> Running in 83fdade55bf6
+				Reading package lists...
+				Building dependency tree...
+				Reading state information...
+				The following NEW packages will be installed:
+				  telnet
+				0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+				Need to get 72.0 kB of archives.
+				After this operation, 161 kB of additional disk space will be used.
+				Get:1 http://deb.debian.org/debian stable/main amd64 telnet amd64 0.17-41 [72.0 kB]
+				debconf: delaying package configuration, since apt-utils is not installed
+				Fetched 72.0 kB in 0s (352 kB/s)
+				Selecting previously unselected package telnet.
+				(Reading database ... 6491 files and directories currently installed.)
+				Preparing to unpack .../telnet_0.17-41_amd64.deb ...
+				Unpacking telnet (0.17-41) ...
+				Setting up telnet (0.17-41) ...
+				update-alternatives: using /usr/bin/telnet.netkit to provide /usr/bin/telnet (telnet) in auto mode
+				 ---> 6a5d8c482c9b
+				Removing intermediate container 83fdade55bf6
+				Successfully built 6a5d8c482c9b
+				Successfully tagged aktest1/myapache:latest
+
+--------------------------- Example: The Docker file contains an invalid command : Start ---------------------------
+		$ vim Dockerfile
+		
+			FROM debian:stable
+			MAINTAINER akdriveus <akdriveus@gmail.com>
+
+			RUN apt-get update
+			RUN apt-get upgrade
+			RUN apt-get install telnet
+			RUN my-command				<-- INVALID COMMAND
+		
+		$ docker build -t  aktest1/myapache .
+		
+				Sending build context to Docker daemon  2.048kB
+				Step 1/6 : FROM debian:stable
+				 ---> c5f70b742a9d
+				Step 2/6 : MAINTAINER akdriveus <akdriveus@gmail.com>
+				 ---> Using cache
+				 ---> f20ffdfade9f
+				Step 3/6 : RUN apt-get update
+				 ---> Using cache
+				 ---> 0ad191c068dd
+				Step 4/6 : RUN apt-get upgrade
+				 ---> Using cache
+				 ---> 4dc15e66c763
+				Step 5/6 : RUN apt-get install telnet
+				 ---> Using cache
+				 ---> 6a5d8c482c9b
+				Step 6/6 : RUN my-command
+				 ---> Running in f75b4c63987e
+				/bin/sh: 1: my-command: not found
+				The command '/bin/sh -c my-command' returned a non-zero code: 127
+
+		$ docker rmi aktest1/myapache
+
+			Untagged: aktest1/myapache:latest
+			Deleted: sha256:6a5d8c482c9b77969a4cb8ba94385d645537f8df6bed1dfd7c304f6335010705
+			Deleted: sha256:01d8003911a4b38529911d92074167ba83c2464a6d6ded386e1ab049633fd1ab
+			Deleted: sha256:4dc15e66c763f505312884b8cd829f7351eb4d025f9559cc98a17723d305094d
+			Deleted: sha256:cdddcc76256b6b79f13bc67a49b0277f34502575ce7d066edbe21150f4c08fed
+			Deleted: sha256:0ad191c068dd20c23a956c5161e888a172e15a942f9bd56c408387e8f505d6ff
+			Deleted: sha256:3a7021dd41897a733afd72407b4a9543f2aba453fb507f745a008b2f16c9b77b
+			Deleted: sha256:f20ffdfade9f89d73184d3a982b1caaa3527e99ed39ab3997d63ade59d5bacfc
+		
+		$ vim Dockerfile	<-- REMOVING THE INVALID COMMAND
+
+				FROM debian:stable
+				MAINTAINER akdriveus <akdriveus@gmail.com>
+
+				RUN apt-get update
+				RUN apt-get upgrade
+				RUN apt-get install telnet
+		
+		$ docker build -t  aktest1/myapache .
+		
+				Sending build context to Docker daemon  2.048kB
+				Step 1/5 : FROM debian:stable
+				 ---> c5f70b742a9d
+				Step 2/5 : MAINTAINER akdriveus <akdriveus@gmail.com>
+				 ---> Running in a4c46e154e4f
+				 ---> 4678a5bfa190
+				Removing intermediate container a4c46e154e4f
+				Step 3/5 : RUN apt-get update
+				 ---> Running in 10cc206fe8cd
+				Ign:1 http://deb.debian.org/debian stable InRelease
+				Get:2 http://deb.debian.org/debian stable-updates InRelease [88.5 kB]
+				Get:3 http://deb.debian.org/debian stable Release [118 kB]
+				Get:4 http://security.debian.org stable/updates InRelease [62.9 kB]
+				Get:5 http://deb.debian.org/debian stable Release.gpg [2373 B]
+				Get:6 http://deb.debian.org/debian stable/main amd64 Packages [9497 kB]
+				Get:7 http://security.debian.org stable/updates/main amd64 Packages [177 kB]
+				Fetched 9946 kB in 1s (5327 kB/s)
+				Reading package lists...
+				 ---> 0c1c8766e0f7
+				Removing intermediate container 10cc206fe8cd
+				Step 4/5 : RUN apt-get upgrade
+				 ---> Running in e748794dbcfb
+				Reading package lists...
+				Building dependency tree...
+				Reading state information...
+				Calculating upgrade...
+				0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+				 ---> 3a5d039e53a9
+				Removing intermediate container e748794dbcfb
+				Step 5/5 : RUN apt-get install telnet
+				 ---> Running in e21c29e5115a
+				Reading package lists...
+				Building dependency tree...
+				Reading state information...
+				The following NEW packages will be installed:
+				  telnet
+				0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+				Need to get 72.0 kB of archives.
+				After this operation, 161 kB of additional disk space will be used.
+				Get:1 http://deb.debian.org/debian stable/main amd64 telnet amd64 0.17-41 [72.0 kB]
+				debconf: delaying package configuration, since apt-utils is not installed
+				Fetched 72.0 kB in 0s (1835 kB/s)
+				Selecting previously unselected package telnet.
+				(Reading database ... 6491 files and directories currently installed.)
+				Preparing to unpack .../telnet_0.17-41_amd64.deb ...
+				Unpacking telnet (0.17-41) ...
+				Setting up telnet (0.17-41) ...
+				update-alternatives: using /usr/bin/telnet.netkit to provide /usr/bin/telnet (telnet) in auto mode
+				 ---> daa26da2b755
+				Removing intermediate container e21c29e5115a
+				Successfully built daa26da2b755
+				Successfully tagged aktest1/myapache:latest
+--------------------------- Example: The Docker file contains an invalid command : End ---------------------------
+
+$ vim Dockerfile
+
+		FROM debian:stable
+		MAINTAINER akdriveus <akdriveus@gmail.com>
+
+		RUN apt-get update
+		RUN apt-get upgrade
+
+$ docker build -t  aktest1/myapache . 
+
+( The docker will used chashed copies "---> Using cache" for any commands and any layers that were previously ran that match exactly the commands that we're looking to build from)
+
+				Sending build context to Docker daemon  2.048kB
+				Step 1/4 : FROM debian:stable
+				 ---> c5f70b742a9d
+				Step 2/4 : MAINTAINER akdriveus <akdriveus@gmail.com>
+				 ---> Using cache
+				 ---> 4678a5bfa190
+				Step 3/4 : RUN apt-get update
+				 ---> Using cache
+				 ---> 0c1c8766e0f7
+				Step 4/4 : RUN apt-get upgrade
+				 ---> Using cache
+				 ---> 3a5d039e53a9
+				Successfully built 3a5d039e53a9
+				Successfully tagged aktest1/myapache:latest
+
+$ vim Dockerfile
+
+		FROM debian:stable
+		MAINTAINER akdriveus <akdriveus@gmail.com>
+
+		RUN apt-get update && apt-get upgrade -y && apt-get install -y apache2 telnet elinks openssh-server
+		
+				
+			<-- This is a best practice. If I can group commands together without causing any issues, then I can save some disk space.
+			<-- Doing it with && , so if any of the comand failed, it doesn't try to continue on.
+
+
+$ docker build -t  aktest1/myapache .
+
+				Sending build context to Docker daemon  2.048kB
+				Step 1/4 : FROM debian:stable
+				 ---> c5f70b742a9d
+				Step 2/4 : MAINTAINER akdriveus <akdriveus@gmail.com>
+				 ---> Using cache
+				 ---> 4678a5bfa190
+				Step 3/4 : RUN apt-get update
+				 ---> Using cache
+				 ---> 0c1c8766e0f7
+				Step 4/4 : RUN apt-get upgrade
+				 ---> Using cache
+				 ---> 3a5d039e53a9
+				Successfully built 3a5d039e53a9
+				Successfully tagged aktest1/myapache:latest
+				[user@akdriveus3 Builds]$ vim Dockerfile
+				[user@akdriveus3 Builds]$ docker build -t  aktest1/myapache .
+				Sending build context to Docker daemon  2.048kB
+				Step 1/3 : FROM debian:stable
+				 ---> c5f70b742a9d
+				Step 2/3 : MAINTAINER akdriveus <akdriveus@gmail.com>
+				 ---> Using cache
+				 ---> 4678a5bfa190
+				Step 3/3 : RUN apt-get update && apt-get upgrade -y && apt-get install -y apache2 telnet elinks openssh-server
+				 ---> Running in 81fd096df4cd
+				Get:1 http://security.debian.org stable/updates InRelease [62.9 kB]
+				Ign:2 http://deb.debian.org/debian stable InRelease
+				Get:3 http://deb.debian.org/debian stable-updates InRelease [88.5 kB]
+				Get:4 http://security.debian.org stable/updates/main amd64 Packages [177 kB]
+				Get:5 http://deb.debian.org/debian stable Release [118 kB]
+				Get:6 http://deb.debian.org/debian stable Release.gpg [2373 B]
+				Get:7 http://deb.debian.org/debian stable/main amd64 Packages [9497 kB]
+				Fetched 9946 kB in 1s (5006 kB/s)
+				Reading package lists...
+				Reading package lists...
+				Building dependency tree...
+				Reading state information...
+				Calculating upgrade...
+				0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+				Reading package lists...
+				Building dependency tree...
+				Reading state information...
+				The following additional packages will be installed:
+				...
+				...
+				Setting up libpam-systemd:amd64 (232-25+deb9u1) ...
+				debconf: unable to initialize frontend: Dialog
+				debconf: (TERM is not set, so the dialog frontend is not usable.)
+				debconf: falling back to frontend: Readline
+				Processing triggers for libc-bin (2.24-11+deb9u1) ...
+				Processing triggers for sgml-base (1.29) ...
+				Processing triggers for dbus (1.10.18-1) ...
+				 ---> d0d79fca8bc3
+				Removing intermediate container 81fd096df4cd
+				Successfully built d0d79fca8bc3
+				Successfully tagged aktest1/myapache:latest
+
+
+				<-- Step 3/3 : is a single command that does multiple stuff.
+
+--------------------------- Example: Environmental value : Start ---------------------------
+
+$ vim Dockerfile
+
+		FROM debian:stable
+		MAINTAINER akdriveus <akdriveus@gmail.com>
+
+		RUN apt-get update && apt-get upgrade -y && apt-get install -y apache2 telnet elinks openssh-server
+
+		ENV MYVALUE my-value
+
+
+$ docker build -t  aktest1/myapache .
+
+		Sending build context to Docker daemon  2.048kB
+		Step 1/4 : FROM debian:stable
+		 ---> c5f70b742a9d
+		Step 2/4 : MAINTAINER akdriveus <akdriveus@gmail.com>
+		 ---> Using cache
+		 ---> 4678a5bfa190
+		Step 3/4 : RUN apt-get update && apt-get upgrade -y && apt-get install -y apache2 telnet elinks openssh-server
+		 ---> Using cache
+		 ---> d0d79fca8bc3
+		Step 4/4 : ENV MYVALUE my-value
+		 ---> Running in 1da8d3eedfb2
+		 ---> 5347ab2250ca
+		Removing intermediate container 1da8d3eedfb2
+		Successfully built 5347ab2250ca
+		Successfully tagged aktest1/myapache:latest
+
+$ docker run -it aktest1/myapache:latest /bin/bash
+
+root@99bf605b0133:/# echo $MYVALUE
+
+		my-value
+
+root@99bf605b0133:/# exit
+
+--------------------------- Example: Environmental value : End ---------------------------
+
+
+$ docker rm `docker ps -a -q`
+
+
+--------------------------- Example: EXPOSE PORTS : Start ---------------------------
+
+$ vim Dockerfile
+
+		FROM debian:stable
+		MAINTAINER akdriveus <akdriveus@gmail.com>
+
+		RUN apt-get update && apt-get upgrade -y && apt-get install -y apache2 telnet elinks openssh-server
+
+		ENV MYVALUE my-value
+
+		EXPOSE 80
+		EXPOSE 22
+		
+		
+		<-- EXPOSE PORTS through my container to my underlying host OS with that port mapping redirect.
+
+$ docker build -t  aktest1/myapache .
+
+			Sending build context to Docker daemon  2.048kB
+			Step 1/6 : FROM debian:stable
+			 ---> c5f70b742a9d
+			Step 2/6 : MAINTAINER akdriveus <akdriveus@gmail.com>
+			 ---> Using cache
+			 ---> 4678a5bfa190
+			Step 3/6 : RUN apt-get update && apt-get upgrade -y && apt-get install -y apache2 telnet elinks openssh-server
+			 ---> Using cache
+			 ---> d0d79fca8bc3
+			Step 4/6 : ENV MYVALUE my-value
+			 ---> Using cache
+			 ---> 5347ab2250ca
+			Step 5/6 : EXPOSE 80
+			 ---> Running in a1dda9924f2e
+			 ---> f51c94278056
+			Removing intermediate container a1dda9924f2e
+			Step 6/6 : EXPOSE 22
+			 ---> Running in 92f3dbac8230
+			 ---> af5dcb1874a7
+			Removing intermediate container 92f3dbac8230
+			Successfully built af5dcb1874a7
+			Successfully tagged aktest1/myapache:latest
+
+$ docker run -it aktest1/myapache:latest /bin/bash
+
+		<-- runns/creates the container of just build image.
+
+root@9acb875fec54:/# ssh user@akdriveus3
+
+			The authenticity of host 'akdriveus3 (34.212.28.153)' can't be established.
+			ECDSA key fingerprint is SHA256:Sh5ax5mN3cu8H3XPP7z783SBW2bFRN5+N+7GV218N2k.
+			Are you sure you want to continue connecting (yes/no)? yes
+			Warning: Permanently added 'akdriveus3,34.212.28.153' (ECDSA) to the list of known hosts.
+			user@akdriveus3's password:
+
+	$ docker ps
+			
+	CONTAINER ID  IMAGE                   COMMAND       CREATED             STATUS              PORTS               NAMES
+	9acb875fec54  aktest1/myapache:latest "/bin/bash"   4 minutes ago       Up 4 minutes        22/tcp, 80/tcp      agitated_dubinsky
+	
+	[user@akdriveus3 ~]$ exit
+	
+root@9acb875fec54:/# exit
+
+--------------------------- Example: EXPOSE PORTS : End ---------------------------
+
+
+$ docker rm `docker ps -a -q`
+
+
+--------------------------- Example: Starting Services : Start ---------------------------
+
+$ vim Dockerfile
+
+		FROM debian:stable
+		MAINTAINER akdriveus <akdriveus@gmail.com>
+
+		RUN apt-get update && apt-get upgrade -y && apt-get install -y apache2 telnet elinks openssh-server
+
+		ENV MYVALUE my-value
+
+		EXPOSE 80
+
+		CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+		
+		
+		<-- RUN applies to the base image
+		<-- CMD applies to the container that based upon the base image
+		<-- Everything is in a list for the command. I'm going to list the things that I want, including the parameters.
+		<-- "-D" because I'm not going to be running in a daemon mode.
+		<-- run in "FOREGROUND"
+		<-- This command and the options that are going to be passesed to the command that will run on any container by default when it is instantiated based on the base image.
+
+$ docker build -t aktest1/myapache .
+
+			Sending build context to Docker daemon  14.85kB
+			Step 1/6 : FROM debian:stable
+			 ---> c5f70b742a9d
+			Step 2/6 : MAINTAINER akdriveus <akdriveus@gmail.com>
+			 ---> Using cache
+			 ---> 4678a5bfa190
+			Step 3/6 : RUN apt-get update && apt-get upgrade -y && apt-get install -y apache2 telnet elinks openssh-server
+			 ---> Using cache
+			 ---> d0d79fca8bc3
+			Step 4/6 : ENV MYVALUE my-value
+			 ---> Using cache
+			 ---> 5347ab2250ca
+			Step 5/6 : EXPOSE 80
+			 ---> Using cache
+			 ---> f51c94278056
+			Step 6/6 : CMD /usr/sbin/apache2ctl -D FOREGROUND
+			 ---> Running in e620cd8e8b65
+			 ---> 684206a78f95
+			Removing intermediate container e620cd8e8b65
+			Successfully built 684206a78f95
+			Successfully tagged aktest1/myapache:latest
+			
+$ docker run -d aktest1/myapache:latest
+
+		fc54c7e2fb1198501ecc30e8d5c95e6846314aee882b9d0c0e508949a67b2478
+		
+$ docker inspect stupefied_morse | grep IPAddr
+
+		"SecondaryIPAddresses": null,
+		"IPAddress": "172.17.0.2",
+		        "IPAddress": "172.17.0.2",
+
+$ elinks 172.17.0.2
+
+			Apache2 Debian Default Page: It works
+			
+
+	$ docker ps
+			
+	CONTAINER ID  IMAGE                    COMMAND                  CREATED        STATUS        PORTS        NAMES
+	fc54c7e2fb11  aktest1/myapache:latest  "/usr/sbin/apache2..."   About an hour  Up an hour    80/tcp       stupefied_morse
+
+$ docker exec -it fc54c7e2fb11 /bin/bash
+
+root@fc54c7e2fb11:/# ps aux | grep apache
+
+	root         1  0.0  0.0   4284   696 ?        Ss   19:00   0:00 /bin/sh /usr/sbin/apache2ctl -D FOREGROUND
+	root        13  0.0  0.3  75604  3316 ?        S    19:00   0:00 /usr/sbin/apache2 -D FOREGROUND
+	www-data    14  0.0  0.4 430364  4876 ?        Sl   19:00   0:00 /usr/sbin/apache2 -D FOREGROUND
+	www-data    15  0.0  0.4 364764  4316 ?        Sl   19:00   0:00 /usr/sbin/apache2 -D FOREGROUND
+	root        77  0.0  0.0  11108   704 ?        S+   20:04   0:00 grep apache
+
+root@fc54c7e2fb11:/# echo $MYVALUE
+
+	my-value
+
+root@fc54c7e2fb11:/# exit
+--------------------------- Example: Starting Services : End ---------------------------
